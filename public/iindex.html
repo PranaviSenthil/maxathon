@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Maxathon - 3D Racing</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div id="question-page">
+        <h1>Math Maxathon</h1>
+        <p id="question"></p>
+        <div id="inputs"></div>
+        <button onclick="submitInputs()">Submit</button>
+    </div>
+
+    <div id="game-page" style="display:none;">
+        <h1>Race Track</h1>
+        <div id="race-container">
+            <canvas id="raceCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let questions = [
+            { question: "A sphere has a diameter of 14 cm. Find its total surface area.", dataFields: ["diameter"], answer: 616, km: 10 },
+            { question: "A cone has a base radius of 5 cm and a slant height of 13 cm. Find its curved surface area.", dataFields: ["radius", "slant height"], answer: 204.2, km: 5 }
+        ];
+        let currentQuestionIndex = 0;
+        let carPosition = 0;
+
+        function loadQuestion() {
+            let q = questions[currentQuestionIndex];
+            document.getElementById('question').innerText = q.question;
+            let inputsHTML = q.dataFields.map(field => `<p>Enter ${field}: <input type='number' id='${field}'></p>`).join('');
+            document.getElementById('inputs').innerHTML = inputsHTML;
+        }
+        function submitInputs() {
+            const finalAnswer = prompt("Enter your final answer:");
+            if (parseFloat(finalAnswer) === questions[currentQuestionIndex].answer) {
+                carPosition += questions[currentQuestionIndex].km;
+                alert("Correct! Advancing " + questions[currentQuestionIndex].km + " km.");
+                currentQuestionIndex++;
+                if (currentQuestionIndex >= questions.length) {
+                    alert("Game Over! You completed all questions.");
+                    return;
+                }
+                switchToGame();
+            } else {
+                alert("Incorrect! Try again.");
+            }
+        }
+
+        function switchToGame() {
+            document.getElementById('question-page').style.display = 'none';
+            document.getElementById('game-page').style.display = 'block';
+            moveCar();
+        }
+
+        function moveCar() {
+            const canvas = document.getElementById('raceCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 400;
+            let carX = carPosition * 10;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(carX, 180, 50, 30);
+        }
+
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
